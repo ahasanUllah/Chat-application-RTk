@@ -1,6 +1,10 @@
+import gravatarUrl from 'gravatar-url';
+import moment from 'moment';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { useConversationsQuery } from '../../features/conversations/conversationsApi';
 import Error from '../ui/Error';
+import getPertnerInfo from '../utils/getPertnerInfo';
 import ChatItem from './ChatItem';
 
 export default function ChatItems() {
@@ -15,15 +19,19 @@ export default function ChatItems() {
       content = <li className="m-2 text-center">No conversations found</li>;
    if (!isLoading && !isError && conversations.length > 0)
       content = conversations.map((conversation) => {
-         const { id, message } = conversation;
+         const { id, message, timestamp, users } = conversation;
+         const { name, email: partnerEmail } = getPertnerInfo(users, email);
+
          return (
             <li key={id}>
-               <ChatItem
-                  avatar="https://cdn.pixabay.com/photo/2018/09/12/12/14/man-3672010__340.jpg"
-                  name="Saad Hasan"
-                  lastMessage={message}
-                  lastTime="25 minutes"
-               />
+               <Link to={`/inbox/${id}`}>
+                  <ChatItem
+                     avatar={gravatarUrl(partnerEmail, { size: 80 })}
+                     name={name}
+                     lastMessage={message}
+                     lastTime={moment(timestamp).fromNow()}
+                  />
+               </Link>
             </li>
          );
       });
