@@ -2,7 +2,7 @@ import gravatarUrl from 'gravatar-url';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { useConversationsQuery } from '../../features/conversations/conversationsApi';
+import { useConversationsQuery, useGetConversationsQuery } from '../../features/conversations/conversationsApi';
 import Error from '../ui/Error';
 import getPertnerInfo from '../utils/getPertnerInfo';
 import ChatItem from './ChatItem';
@@ -10,7 +10,7 @@ import ChatItem from './ChatItem';
 export default function ChatItems() {
    const { user } = useSelector((state) => state.auth);
    const { email } = user || {};
-   const { data: conversations, isLoading, isError, error } = useConversationsQuery(email);
+   const { data: conversations, isLoading, isError, error } = useGetConversationsQuery(email);
 
    let content = null;
    if (isLoading) content = <li className="m-2 text-center">Loading ...</li>;
