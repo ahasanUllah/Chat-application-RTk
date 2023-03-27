@@ -67,7 +67,7 @@ export const conversationsApi = apiSlice.injectEndpoints({
                   const users = arg.data.users;
                   const senderInfo = users.find((user) => user.email === sender);
                   const receiverInfo = users.find((user) => user.email !== sender);
-                  dispatch(
+                  const res = await dispatch(
                      messagesApi.endpoints.addMessage.initiate({
                         conversationId: conversations?.data?.id,
                         sender: senderInfo,
@@ -75,7 +75,14 @@ export const conversationsApi = apiSlice.injectEndpoints({
                         message: message,
                         timestamp,
                      })
+                  ).unwrap();
+                  // Passimistic update start
+                  dispatch(
+                     apiSlice.util.updateQueryData('messages', res.conversationId.toString(), (draft) => {
+                        draft.push(res);
+                     })
                   );
+                  // Passimistic update end
                }
             } catch (error) {
                patchResult1.undo();
